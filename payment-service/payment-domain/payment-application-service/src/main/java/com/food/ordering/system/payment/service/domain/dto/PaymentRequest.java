@@ -8,15 +8,16 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class PaymentRequest {
-    private String id;
-    private String sagaId;
-    private String orderId;
-    private String customerId;
+    private UUID id;
+    private UUID sagaId;
+    private UUID orderId;
+    private UUID customerId;
     private BigDecimal price;
     private Instant createdAt;
     @Setter

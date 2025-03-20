@@ -1,4 +1,4 @@
-package com.food.ordering.system.order.service.messaging.publisher.kafka;
+package com.food.ordering.system.kafka.producer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class OrderKafkaMessageHelper {
+public class KafkaMessageHelper {
 
     public <T> void getKafkaCallback(SendResult<String, T> result, Throwable ex,
-                                     String responseTopicName, T requestAvroModel, String orderId, String requestAvroModelName) {
+                                     String responseTopicName, T avroModel, String orderId, String avroModelName) {
         if (ex != null) {
-            log.error("Error while sending {} message {} to topic {}", requestAvroModelName, requestAvroModel.toString(),
+            log.error("Error while sending {} message {} to topic {}", avroModelName, avroModel.toString(),
                     responseTopicName, ex);
         } else {
             RecordMetadata recordMetadata = result.getRecordMetadata();
@@ -25,4 +25,5 @@ public class OrderKafkaMessageHelper {
                     recordMetadata.timestamp());
         }
     }
+
 }

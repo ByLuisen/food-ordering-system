@@ -64,11 +64,11 @@ public class OrderMessagingDataMapper {
 
     public PaymentResponse paymentResponseAvroModelToPaymentResponse(PaymentResponseAvroModel paymentResponseAvroModel) {
         return PaymentResponse.builder()
-                .id(paymentResponseAvroModel.getId().toString())
-                .sagaId(paymentResponseAvroModel.getSagaId().toString())
-                .paymentId(paymentResponseAvroModel.getPaymentId().toString())
-                .customerId(paymentResponseAvroModel.getCustomerId().toString())
-                .orderId(paymentResponseAvroModel.getOrderId().toString())
+                .id(paymentResponseAvroModel.getId())
+                .sagaId(paymentResponseAvroModel.getSagaId())
+                .paymentId(paymentResponseAvroModel.getPaymentId())
+                .customerId(paymentResponseAvroModel.getCustomerId())
+                .orderId(paymentResponseAvroModel.getOrderId())
                 .price(paymentResponseAvroModel.getPrice())
                 .createdAt(paymentResponseAvroModel.getCreatedAt())
                 .paymentStatus(PaymentStatus.valueOf(paymentResponseAvroModel.getPaymentStatus().name()))
@@ -80,10 +80,10 @@ public class OrderMessagingDataMapper {
     restaurantApprovalResponseAvroModelToRestaurantApprovalResponse(RestaurantApprovalResponseAvroModel
                                                                             restaurantApprovalRequestAvroModel) {
         return RestaurantApprovalResponse.builder()
-                .id(restaurantApprovalRequestAvroModel.getId().toString())
-                .sagaId(restaurantApprovalRequestAvroModel.getSagaId().toString())
-                .restaurantId(restaurantApprovalRequestAvroModel.getRestaurantId().toString())
-                .orderId(restaurantApprovalRequestAvroModel.getOrderId().toString())
+                .id(restaurantApprovalRequestAvroModel.getId())
+                .sagaId(restaurantApprovalRequestAvroModel.getSagaId())
+                .restaurantId(restaurantApprovalRequestAvroModel.getRestaurantId())
+                .orderId(restaurantApprovalRequestAvroModel.getOrderId())
                 .createdAt(restaurantApprovalRequestAvroModel.getCreatedAt())
                 .orderApprovalStatus(OrderApprovalStatus.valueOf(restaurantApprovalRequestAvroModel.getOrderApprovalStatus().name()))
                 .failureMessages(restaurantApprovalRequestAvroModel.getFailureMessages())
