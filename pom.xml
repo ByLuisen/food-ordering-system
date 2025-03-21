@@ -23,6 +23,7 @@
         <module>customer-service</module>
         <module>payment-service</module>
         <module>payment-service/payment-messaging</module>
+        <module>restaurant-service</module>
     </modules>
 
     <properties>
@@ -73,7 +74,17 @@
             </dependency>
             <dependency>
                 <groupId>com.food.ordering.system</groupId>
+                <artifactId>payment-dataaccess</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.food.ordering.system</groupId>
                 <artifactId>common-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.food.ordering.system</groupId>
+                <artifactId>payment-messaging</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
