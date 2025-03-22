@@ -55,7 +55,7 @@ public class PaymentRequestHelper {
     @Transactional
     public PaymentEvent persistCancelPayment(PaymentRequest paymentRequest) {
         log.info("Received payment rollback event for order id: {}", paymentRequest.getOrderId());
-        Optional<Payment> paymentResponse = paymentRepository.findByOrderId(UUID.fromString(paymentRequest.getOrderId()));
+        Optional<Payment> paymentResponse = paymentRepository.findByOrderId(paymentRequest.getOrderId());
         if (paymentResponse.isEmpty()) {
             log.error("Payment with order id: {} could not be found!", paymentRequest.getOrderId());
             throw new PaymentApplicationServiceException("Payment with order id: " + paymentRequest.getOrderId() +
