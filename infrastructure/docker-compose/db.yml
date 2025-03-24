@@ -1,0 +1,34 @@
+volumes:
+  food_ordering_system_db: {}
+  cloudbeaver: {}
+
+services:
+  food-ordering-system-db:
+    image: postgres:14
+    container_name: food-ordering-system-db
+    volumes:
+      - food_ordering_system_db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - ${GLOBAL_NETWORK:-food-ordering-system}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cloudbeaver:
+    restart: unless-stopped
+    image: dbeaver/cloudbeaver:25.0.0
+    container_name: cloudbeaver
+    volumes:
+      - cloudbeaver:/opt/cloudbeaver/workspace
+    ports:
+      - 8978:8978
+    networks:
+      - ${GLOBAL_NETWORK:-food-ordering-system}
