@@ -1,4 +1,4 @@
-package com.food.ordering.system.restaurant.service.domain.events;
+package com.food.ordering.system.restaurant.service.domain.event;
 
 import com.food.ordering.system.domain.event.publisher.DomainEventPublisher;
 import com.food.ordering.system.domain.valueobject.RestaurantId;

@@ -52,5 +52,6 @@ public class RestaurantApprovalResponseKafkaListener implements KafkaConsumer<Re
                         .restaurantApprovalResponseAvroModelToRestaurantApprovalResponse(restaurantApprovalResponseAvroModel));
             }
         });
+
     }
 }

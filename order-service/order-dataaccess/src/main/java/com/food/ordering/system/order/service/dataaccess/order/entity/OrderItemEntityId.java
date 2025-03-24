@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class OrderItemEntityId implements Serializable {
 
-    private Long id;
+    private UUID id;
     private OrderEntity order;
 
     @Override

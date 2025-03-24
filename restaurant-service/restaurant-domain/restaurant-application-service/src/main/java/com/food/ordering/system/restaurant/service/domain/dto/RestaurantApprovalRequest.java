@@ -15,10 +15,10 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 public class RestaurantApprovalRequest {
-    private String id;
-    private String sagaId;
-    private String restaurantId;
-    private String orderId;
+    private UUID id;
+    private UUID sagaId;
+    private UUID restaurantId;
+    private UUID orderId;
     private RestaurantOrderStatus restaurantOrderStatus;
     private List<Product> products;
     private BigDecimal price;
