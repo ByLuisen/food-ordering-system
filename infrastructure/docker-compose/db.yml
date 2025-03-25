@@ -26,6 +26,8 @@ services:
     restart: unless-stopped
     image: dbeaver/cloudbeaver:25.0.0
     container_name: cloudbeaver
+    environment:
+      - CLOUDBEAVER_EXPIRE_SESSION_AFTER_PERIOD=2147460000
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
     ports:
