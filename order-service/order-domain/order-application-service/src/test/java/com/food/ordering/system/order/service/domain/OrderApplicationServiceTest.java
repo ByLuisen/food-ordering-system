@@ -205,8 +205,8 @@ public class OrderApplicationServiceTest {
 
     private OrderPaymentOutboxMessage getOrderPaymentOutboxMessage() {
         OrderPaymentEventPayload orderPaymentEventPayload =  OrderPaymentEventPayload.builder()
-                .orderId(ORDER_ID.toString())
-                .customerId(CUSTOMER_ID.toString())
+                .orderId(ORDER_ID)
+                .customerId(CUSTOMER_ID)
                 .price(PRICE)
                 .createdAt(ZonedDateTime.now())
                 .paymentOrderStatus(PaymentOrderStatus.PENDING.name())

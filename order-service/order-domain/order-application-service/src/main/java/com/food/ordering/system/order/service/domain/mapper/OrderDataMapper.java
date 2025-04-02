@@ -63,8 +63,8 @@ public class OrderDataMapper {
 
     public OrderPaymentEventPayload orderCreatedEventToOrderPaymentEventPayload(OrderCreatedEvent orderCreatedEvent) {
         return OrderPaymentEventPayload.builder()
-                .customerId(orderCreatedEvent.getOrder().getCustomerId().getValue().toString())
-                .orderId(orderCreatedEvent.getOrder().getId().getValue().toString())
+                .customerId(orderCreatedEvent.getOrder().getCustomerId().getValue())
+                .orderId(orderCreatedEvent.getOrder().getId().getValue())
                 .price(orderCreatedEvent.getOrder().getPrice().getAmount())
                 .createdAt(orderCreatedEvent.getCreatedAt())
                 .paymentOrderStatus(PaymentOrderStatus.PENDING.name())
@@ -73,8 +73,8 @@ public class OrderDataMapper {
 
     public OrderPaymentEventPayload orderCancelledEventToOrderPaymentEventPayload(OrderCancelledEvent orderCancelledEvent) {
         return OrderPaymentEventPayload.builder()
-                .customerId(orderCancelledEvent.getOrder().getCustomerId().getValue().toString())
-                .orderId(orderCancelledEvent.getOrder().getId().getValue().toString())
+                .customerId(orderCancelledEvent.getOrder().getCustomerId().getValue())
+                .orderId(orderCancelledEvent.getOrder().getId().getValue())
                 .price(orderCancelledEvent.getOrder().getPrice().getAmount())
                 .createdAt(orderCancelledEvent.getCreatedAt())
                 .paymentOrderStatus(PaymentOrderStatus.CANCELLED.name())
@@ -83,12 +83,12 @@ public class OrderDataMapper {
 
     public OrderApprovalEventPayload orderPaidEventToOrderApprovalEventPayload(OrderPaidEvent orderPaidEvent) {
         return OrderApprovalEventPayload.builder()
-                .orderId(orderPaidEvent.getOrder().getId().getValue().toString())
-                .restaurantId(orderPaidEvent.getOrder().getRestaurantId().getValue().toString())
+                .orderId(orderPaidEvent.getOrder().getId().getValue())
+                .restaurantId(orderPaidEvent.getOrder().getRestaurantId().getValue())
                 .restaurantOrderStatus(RestaurantOrderStatus.PAID.name())
                 .products(orderPaidEvent.getOrder().getItems().stream().map(orderItem ->
                         OrderApprovalEventProduct.builder()
-                                .id(orderItem.getProduct().getId().getValue().toString())
+                                .id(orderItem.getProduct().getId().getValue())
                                 .quantity(orderItem.getQuantity())
                                 .build()).toList())
                 .price(orderPaidEvent.getOrder().getPrice().getAmount())

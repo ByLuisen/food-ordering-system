@@ -10,5 +10,4 @@ import org.springframework.context.annotation.Configuration;
 public class PaymentServiceConfigData {
     private String paymentRequestTopicName;
     private String paymentResponseTopicName;
-
 }

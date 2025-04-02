@@ -23,7 +23,6 @@ public class ApprovalOutboxRepositoryImpl implements ApprovalOutboxRepository {
     private final ApprovalOutboxJpaRepository approvalOutboxJpaRepository;
     private final ApprovalOutboxDataAccessMapper approvalOutboxDataAccessMapper;
 
-
     @Override
     public OrderApprovalOutboxMessage save(OrderApprovalOutboxMessage orderApprovalOutboxMessage) {
         return approvalOutboxDataAccessMapper

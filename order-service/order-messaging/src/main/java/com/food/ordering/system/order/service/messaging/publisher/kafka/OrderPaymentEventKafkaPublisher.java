@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
 @Slf4j
@@ -27,36 +28,36 @@ public class OrderPaymentEventKafkaPublisher implements PaymentRequestMessagePub
     private final KafkaProducer<String, PaymentRequestAvroModel> kafkaProducer;
     private final OrderServiceConfigData orderServiceConfigData;
     private final KafkaMessageHelper kafkaMessageHelper;
-    private final ObjectMapper objectMapper;
 
     @Override
     public void publish(OrderPaymentOutboxMessage orderPaymentOutboxMessage,
                         BiConsumer<OrderPaymentOutboxMessage, OutboxStatus> outboxCallback) {
         OrderPaymentEventPayload orderPaymentEventPayload =
-                getOrderPaymentEventPayload(orderPaymentOutboxMessage.getPayload());
+                kafkaMessageHelper.getOrderEventPayload(orderPaymentOutboxMessage.getPayload(),
+                        OrderPaymentEventPayload.class);
 
-        String sagaId = orderPaymentOutboxMessage.getSagaId().toString();
+        UUID sagaId = orderPaymentOutboxMessage.getSagaId();
         log.info("Received OrderPaymentOutboxMessage for order id: {} and saga id: {}",
                 orderPaymentEventPayload.getOrderId(),
                 sagaId);
-
-        PaymentRequestAvroModel paymentRequestAvroModel = orderMessagingDataMapper
-                .orderPaymentEventToPaymentRequestAvroModel(sagaId, orderPaymentEventPayload);
-
-        kafkaProducer.send(orderServiceConfigData.getPaymentRequestTopicName(), sagaId, paymentRequestAvroModel)
-                .whenComplete((result, ex) ->
-                        kafkaMessageHelper.getKafkaCallback(result, ex,
-                                orderServiceConfigData.getPaymentRequestTopicName(), paymentRequestAvroModel,
-                                orderPaymentOutboxMessage, outboxCallback, orderPaymentEventPayload.getOrderId().toString(),
-                                "PaymentRequestAvroModel"));
-    }
-
-    private OrderPaymentEventPayload getOrderPaymentEventPayload(String payload) {
         try {
-            return objectMapper.readValue(payload, OrderPaymentEventPayload.class);
-        } catch (JsonProcessingException e) {
-            log.error("Could not read OrderPaymentEventPayload object!", e);
-            throw new OrderDomainException("Could not read OrderPaymentEventPayload object!", e);
+            PaymentRequestAvroModel paymentRequestAvroModel = orderMessagingDataMapper
+                    .orderPaymentEventToPaymentRequestAvroModel(sagaId, orderPaymentEventPayload);
+
+            kafkaProducer.send(orderServiceConfigData.getPaymentRequestTopicName(), sagaId.toString(),
+                            paymentRequestAvroModel)
+                    .whenComplete((result, ex) ->
+                            kafkaMessageHelper.getKafkaCallback(result, ex,
+                                    orderServiceConfigData.getPaymentRequestTopicName(), paymentRequestAvroModel,
+                                    orderPaymentOutboxMessage, outboxCallback,
+                                    orderPaymentEventPayload.getOrderId(),
+                                    "PaymentRequestAvroModel"));
+
+            log.info("OrderPaymentEventPayload sent to Kafka for order id: {} and saga id: {}",
+                    orderPaymentEventPayload.getOrderId(), sagaId);
+        } catch (Exception e) {
+            log.error("Error while sending OrderPaymentEventPayload to Kafka with order id: {} and saga id: {}, " +
+                    "error: {}", orderPaymentEventPayload.getOrderId(), sagaId, e.getMessage());
         }
     }
 }
