@@ -40,11 +40,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <image>${project.groupId}/restaurant.service:${project.version}</image>
+                    <image>
+                        <name>${project.groupId}/restaurant.service:${project.version}</name>
+                        <!-- <dockerFile>${project.basedir}/src/main/docker/Dockerfile</dockerFile>-->
+                    </image>
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>build-image</goal>
                         </goals>

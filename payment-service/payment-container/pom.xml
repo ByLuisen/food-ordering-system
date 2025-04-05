@@ -42,7 +42,7 @@
                 <configuration>
                     <image>
                         <name>${project.groupId}/payment.service:${project.version}</name>
-                        <dockerFile>${project.basedir}/src/main/docker/Dockerfile</dockerFile>
+<!--                        <dockerFile>${project.basedir}/src/main/docker/Dockerfile</dockerFile>-->
                     </image>
                 </configuration>
                 <executions>
