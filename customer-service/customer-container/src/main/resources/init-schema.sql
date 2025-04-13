@@ -4,45 +4,41 @@ CREATE SCHEMA customer;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE customer.customers
-(
-    id uuid NOT NULL,
-    username character varying COLLATE pg_catalog."default" NOT NULL,
-    first_name character varying COLLATE pg_catalog."default" NOT NULL,
-    last_name character varying COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT customers_pkey PRIMARY KEY (id)
+DROP TABLE IF EXISTS customer.customers CASCADE;
+
+CREATE TABLE customer.customers (
+    id UUID NOT NULL,
+    username CHARACTER VARYING COLLATE pg_catalog."default" NOT NULL,
+    first_name CHARACTER VARYING COLLATE pg_catalog."default" NOT NULL,
+    last_name CHARACTER VARYING COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT pk_customers PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS "order".customers CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS customer.mv_customer_order;
 
-DROP MATERIALIZED VIEW IF EXISTS customer.order_customer_m_view;
-
-CREATE MATERIALIZED VIEW customer.order_customer_m_view
+CREATE MATERIALIZED VIEW customer.mv_customer_order
 TABLESPACE pg_default
 AS
- SELECT id,
-    username,
-    first_name,
-    last_name
-   FROM customer.customers
+ SELECT id, username, first_name, last_name
+ FROM customer.customers
 WITH DATA;
 
-refresh materialized VIEW customer.order_customer_m_view;
+REFRESH MATERIALIZED VIEW customer.mv_customer_order;
 
-DROP function IF EXISTS customer.refresh_order_customer_m_view;
+DROP FUNCTION IF EXISTS customer.fn_mv_refresh_customer_order;
 
-CREATE OR replace function customer.refresh_order_customer_m_view()
-returns trigger
+CREATE OR REPLACE FUNCTION customer.fn_mv_refresh_customer_order()
+RETURNS TRIGGER
 AS '
 BEGIN
-    refresh materialized VIEW customer.order_customer_m_view;
+    REFRESH MATERIALIZED VIEW customer.mv_customer_order;
     return null;
 END;
 '  LANGUAGE plpgsql;
 
-DROP trigger IF EXISTS refresh_order_customer_m_view ON customer.customers;
+DROP TRIGGER IF EXISTS trig_mv_refresh_customer_order ON customer.customers;
 
-CREATE trigger refresh_order_customer_m_view
-after INSERT OR UPDATE OR DELETE OR truncate
-ON customer.customers FOR each statement
-EXECUTE PROCEDURE customer.refresh_order_customer_m_view();
+CREATE TRIGGER trig_mv_refresh_customer_order
+AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE
+ON customer.customers FOR EACH STATEMENT
+EXECUTE PROCEDURE customer.fn_mv_refresh_customer_order();

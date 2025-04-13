@@ -9,10 +9,9 @@ import com.food.ordering.system.restaurant.service.domain.entity.OrderDetail;
 import com.food.ordering.system.restaurant.service.domain.entity.Product;
 import com.food.ordering.system.restaurant.service.domain.entity.Restaurant;
 import com.food.ordering.system.restaurant.service.domain.event.OrderApprovalEvent;
-import com.food.ordering.system.restaurant.service.domain.outbox.model.OrderEventPayload;
+import com.food.ordering.system.domain.event.payload.RestaurantOrderEventPayload;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,9 +35,9 @@ public class RestaurantDataMapper {
                 .build();
     }
 
-    public OrderEventPayload
+    public RestaurantOrderEventPayload
     orderApprovalEventToOrderEventPayload(OrderApprovalEvent orderApprovalEvent) {
-        return OrderEventPayload.builder()
+        return RestaurantOrderEventPayload.builder()
                 .orderId(orderApprovalEvent.getOrderApproval().getOrderId().getValue())
                 .restaurantId(orderApprovalEvent.getRestaurantId().getValue())
                 .orderApprovalStatus(orderApprovalEvent.getOrderApproval().getApprovalStatus().name())

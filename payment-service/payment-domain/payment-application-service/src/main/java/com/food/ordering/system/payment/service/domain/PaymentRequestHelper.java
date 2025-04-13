@@ -13,7 +13,6 @@ import com.food.ordering.system.payment.service.domain.exception.PaymentNotFound
 import com.food.ordering.system.payment.service.domain.mapper.PaymentDataMapper;
 import com.food.ordering.system.payment.service.domain.outbox.model.OrderOutboxMessage;
 import com.food.ordering.system.payment.service.domain.outbox.scheduler.OrderOutboxHelper;
-import com.food.ordering.system.payment.service.domain.ports.output.message.publisher.PaymentResponseMessagePublisher;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.CreditEntryRepository;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.CreditHistoryRepository;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.PaymentRepository;
@@ -37,11 +36,10 @@ public class PaymentRequestHelper {
     private final CreditEntryRepository creditEntryRepository;
     private final CreditHistoryRepository creditHistoryRepository;
     private final OrderOutboxHelper orderOutboxHelper;
-    private final PaymentResponseMessagePublisher paymentResponseMessagePublisher;
 
     @Transactional
     public void persistPayment(PaymentRequest paymentRequest) {
-        if (publishIfOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.COMPLETED)) {
+        if (isOutboxMessageProcessed(paymentRequest, PaymentStatus.COMPLETED)) {
             return;
         }
 
@@ -62,7 +60,7 @@ public class PaymentRequestHelper {
 
     @Transactional
     public void persistCancelPayment(PaymentRequest paymentRequest) {
-        if (publishIfOutboxMessageProcessedForPayment(paymentRequest, PaymentStatus.CANCELLED)) {
+        if (isOutboxMessageProcessed(paymentRequest, PaymentStatus.CANCELLED)) {
             return;
         }
 
@@ -116,16 +114,12 @@ public class PaymentRequestHelper {
         }
     }
 
-    private boolean publishIfOutboxMessageProcessedForPayment(PaymentRequest paymentRequest,
-                                                              PaymentStatus paymentStatus) {
+    private boolean isOutboxMessageProcessed(PaymentRequest paymentRequest, PaymentStatus paymentStatus) {
         Optional<OrderOutboxMessage> orderOutboxMessage =
                 orderOutboxHelper.getCompletedOrderOutboxMessageBySagaIdAndPaymentStatus(
                         paymentRequest.getSagaId(),
                         paymentStatus);
         if (orderOutboxMessage.isPresent()) {
-            log.info("An outbox message with saga id: {} is already saved to database!",
-                    paymentRequest.getSagaId());
-            paymentResponseMessagePublisher.publish(orderOutboxMessage.get(), orderOutboxHelper::updateOutboxMessage);
             return true;
         }
         return false;
