@@ -1,14 +1,11 @@
 package com.food.ordering.system.payment.service.messaging.listener.kafka;
 
 import com.food.ordering.system.domain.event.payload.OrderPaymentEventPayload;
-import com.food.ordering.system.kafka.consumer.KafkaConsumer;
 import com.food.ordering.system.kafka.consumer.KafkaSingleItemConsumer;
 import com.food.ordering.system.kafka.order.avro.model.PaymentOrderStatus;
-import com.food.ordering.system.kafka.order.avro.model.PaymentRequestAvroModel;
 import com.food.ordering.system.kafka.producer.KafkaMessageHelper;
 import com.food.ordering.system.messaging.DebeziumOp;
 import com.food.ordering.system.payment.service.domain.exception.PaymentApplicationServiceException;
-import com.food.ordering.system.payment.service.domain.exception.PaymentDomainException;
 import com.food.ordering.system.payment.service.domain.exception.PaymentNotFoundException;
 import com.food.ordering.system.payment.service.domain.ports.input.message.listener.PaymentRequestMessageListener;
 import com.food.ordering.system.payment.service.messaging.mapper.PaymentMessagingDataMapper;
@@ -25,7 +22,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -77,6 +73,9 @@ public class PaymentRequestKafkaListener implements KafkaSingleItemConsumer<Enve
             } catch (PaymentNotFoundException e) {
                 //NO-OP for PaymentNotFoundException
                 log.error("No payment found for order id: {}", orderPaymentEventPayload.getOrderId());
+            } catch (Exception e) {
+                throw new PaymentApplicationServiceException("Throwing Unexpected Exception in " +
+                        "PaymentRequestKafkaListener: " + e.getMessage(), e);
             }
         }
     }

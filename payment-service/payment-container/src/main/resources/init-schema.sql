@@ -25,6 +25,7 @@ CREATE TABLE "payment".credit_entry (
     id UUID NOT NULL,
     customer_id UUID NOT NULL,
     total_credit_amount NUMERIC(10,2) NOT NULL,
+    version INTEGER NOT NULL,
     CONSTRAINT pk_credit_entry PRIMARY KEY (id)
 );
 
