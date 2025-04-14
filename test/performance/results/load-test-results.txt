@@ -1,0 +1,14 @@
+Change Data Capture Pessimistic Locking:
+300 records -> 21 seconds
+1500 records -> 44 seconds
+3000 records -> 1:08 seconds
+
+Change Data Capture Optimistic Locking:
+300 records -> 22 seconds
+1500 records -> 45 seconds
+3000 records -> 1:05 seconds
+
+Pulling the outbox table Pessimistic Locking:
+300 records -> 46 seconds
+1500 records -> 1:02 seconds
+3000 records -> N/A
