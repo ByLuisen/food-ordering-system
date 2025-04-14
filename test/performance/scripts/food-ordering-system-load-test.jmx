@@ -5,10 +5,12 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
-        <intProp name="ThreadGroup.num_threads">10</intProp>
+        <intProp name="ThreadGroup.num_threads">1000</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
@@ -18,7 +20,7 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults">
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
           <stringProp name="HTTPSampler.domain">localhost</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
@@ -36,7 +38,7 @@
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Order 1">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Order 1" enabled="true">
           <stringProp name="HTTPSampler.port">8181</stringProp>
           <stringProp name="HTTPSampler.path">v1/orders</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -71,7 +73,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">orderTrackingId_1</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$..orderTrackingId</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
@@ -79,7 +81,7 @@
           </JSONPostProcessor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Order 2">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Order 2" enabled="true">
           <stringProp name="HTTPSampler.port">8182</stringProp>
           <stringProp name="HTTPSampler.path">v1/orders</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -169,7 +171,7 @@
           <stringProp name="WhileController.condition">${__javaScript(&quot;${orderStatus_1}&quot; != &quot;APPROVED&quot; &amp;&amp; &quot;${orderStatus_1}&quot; != &quot;CANCELLED&quot;)}</stringProp>
         </WhileController>
         <hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Order Result 1">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get Order Result 1" enabled="true">
             <stringProp name="HTTPSampler.port">8181</stringProp>
             <stringProp name="HTTPSampler.path">v1/orders/${orderTrackingId_1}</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -189,7 +191,7 @@
             <hashTree/>
           </hashTree>
         </hashTree>
-        <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="While Controller" enabled="true">
+        <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="While Controller">
           <stringProp name="WhileController.condition">${__javaScript(&quot;${orderStatus_2}&quot; != &quot;APPROVED&quot; &amp;&amp; &quot;${orderStatus_2}&quot; != &quot;CANCELLED&quot;)}</stringProp>
         </WhileController>
         <hashTree>
