@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +29,6 @@ public class OrderRepositoryImpl implements OrderRepository {
         return orderJpaRepository.findById(orderId.getValue())
                 .map(orderDataAccessMapper::orderEntityToOrder);
     }
-
 
     @Override
     public Optional<Order> findByTrackingId(TrackingId trackingId) {
