@@ -6,5 +6,5 @@ public final class SagaConstants {
 
     }
 
-    public final static String ORDER_SAGA_NAME = "OrderProcessingSaga";
+    public static final String ORDER_SAGA_NAME = "OrderProcessingSaga";
 }

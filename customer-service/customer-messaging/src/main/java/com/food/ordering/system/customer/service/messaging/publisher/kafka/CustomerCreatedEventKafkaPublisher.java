@@ -9,7 +9,10 @@ import com.food.ordering.system.kafka.producer.service.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
+
+import java.util.function.BiConsumer;
 
 @Slf4j
 @Component
@@ -30,28 +33,32 @@ public class CustomerCreatedEventKafkaPublisher implements CustomerMessagePublis
                     customerMessagingDataMapper.customerCreatedEventToCustomerAvroModel(customerCreatedEvent);
 
             kafkaProducer.send(customerServiceConfigData.getCustomerTopicName(), customerAvroModel.getId().toString(),
-                            customerAvroModel)
-                    .whenComplete((result, ex) -> {
-                        if (ex != null) {
-                            log.error("Error while sending message {} to topic {}",
-                                    result.getProducerRecord().value().toString(),
-                                    result.getRecordMetadata().topic(), ex);
-                        } else {
-                            RecordMetadata recordMetadata = result.getRecordMetadata();
-                            log.info("Received new metadata. Topic: {}; Partition: {}; Offset: {}; " +
-                                            "Timestamp: {}, at time: {}",
-                                    recordMetadata.topic(),
-                                    recordMetadata.partition(),
-                                    recordMetadata.offset(),
-                                    recordMetadata.timestamp(),
-                                    System.nanoTime());
-                        }
-                    });
+                    customerAvroModel, getCallback(customerServiceConfigData.getCustomerTopicName(),
+                            customerAvroModel));
 
             log.info("CustomerCreatedEvent sent to Kafka for customer id: {}", customerAvroModel.getId());
         } catch (Exception e) {
             log.error("Error while sending CustomerCreatedEvent to Kafka for customer id: {}, error: {}",
                     customerCreatedEvent.getCustomer().getId().getValue(), e.getMessage());
         }
+    }
+
+    private BiConsumer<SendResult<String, CustomerAvroModel>, Throwable>
+    getCallback(String topicName, CustomerAvroModel message) {
+        return (result, ex) -> {
+            if (ex == null) {
+                RecordMetadata recordMetadata = result.getRecordMetadata();
+                log.info("Received new metadata. Topic: {}; Partition: {}; Offset: {}; " +
+                                "Timestamp: {}, at time: {}",
+                        recordMetadata.topic(),
+                        recordMetadata.partition(),
+                        recordMetadata.offset(),
+                        recordMetadata.timestamp(),
+                        System.nanoTime());
+            } else {
+                log.error("Error while sending message {} to topic {}",
+                        message.toString(), topicName, ex);
+            }
+        };
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
 @Slf4j
 @Component
@@ -21,12 +21,14 @@ public class KafkaProducerImpl<K extends Serializable, V extends SpecificRecordB
     private final KafkaTemplate<K, V> kafkaTemplate;
 
     @Override
-    public CompletableFuture<SendResult<K, V>> send(String topicName, K key, V message) {
+    public void send(String topicName, K key, V message, BiConsumer<SendResult<K, V>, Throwable> callback) {
         log.info("Sending message = {} to topic = {}", message, topicName);
         try {
-            return kafkaTemplate.send(topicName, key, message);
+            CompletableFuture<SendResult<K, V>> kafkaResultFuture = kafkaTemplate.send(topicName, key, message);
+            kafkaResultFuture.whenComplete(callback);
         } catch (KafkaProducerException e) {
-            log.error("Error on Kafka producer with key: {} and message: {}", key, message);
+            log.error("Error on Kafka producer with key: {}, message: {} and exception: {}", key, message,
+                    e.getMessage(), e);
             throw new KafkaProducerException("Error on Kafka producer with key: " + key + " and message: " + message);
         }
     }
