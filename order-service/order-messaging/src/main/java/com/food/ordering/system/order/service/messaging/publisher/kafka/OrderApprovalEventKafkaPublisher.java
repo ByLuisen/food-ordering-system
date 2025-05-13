@@ -42,13 +42,11 @@ public class OrderApprovalEventKafkaPublisher implements RestaurantApprovalReque
                             orderApprovalEventPayload);
 
             kafkaProducer.send(orderServiceConfigData.getRestaurantApprovalRequestTopicName(), sagaId.toString(),
-                            restaurantApprovalRequestAvroModel)
-                    .whenComplete((result, ex) ->
-                            kafkaMessageHelper.getKafkaCallback(result, ex,
-                                    orderServiceConfigData.getRestaurantApprovalRequestTopicName(),
-                                    restaurantApprovalRequestAvroModel, orderApprovalOutboxMessage, outboxCallback,
-                                    orderApprovalEventPayload.getOrderId(),
-                                    "RestaurantApprovalRequestAvroModel"));
+                    restaurantApprovalRequestAvroModel, kafkaMessageHelper.getKafkaCallback(
+                            orderServiceConfigData.getRestaurantApprovalRequestTopicName(),
+                            restaurantApprovalRequestAvroModel, orderApprovalOutboxMessage, outboxCallback,
+                            orderApprovalEventPayload.getOrderId(),
+                            "RestaurantApprovalRequestAvroModel"));
 
             log.info("OrderApprovalEventPayload sent to Kafka for order id: {} and saga id: {}",
                     restaurantApprovalRequestAvroModel.getOrderId(), sagaId);

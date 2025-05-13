@@ -20,25 +20,27 @@ public class KafkaMessageHelper {
 
     private final ObjectMapper objectMapper;
 
-    public <T, U> void getKafkaCallback(SendResult<String, T> result, Throwable ex,
-                                        String responseTopicName, T avroModel, U outboxMessage,
-                                        BiConsumer<U, OutboxStatus> outboxStatus,
-                                        UUID orderId, String avroModelName) {
-        if (ex != null) {
-            log.error("Error while sending {} message: {} and outbox type: {} to topic {}", avroModelName,
-                    avroModel.toString(), outboxMessage.getClass().getName(), responseTopicName, ex);
-            outboxStatus.accept(outboxMessage, OutboxStatus.FAILED);
-        } else {
-            RecordMetadata recordMetadata = result.getRecordMetadata();
-            log.info("Received successful response from kafka for order id: {}" +
-                            " Topic: {} Partition: {} Offset: {} Timestamp: {}",
-                    orderId,
-                    recordMetadata.topic(),
-                    recordMetadata.partition(),
-                    recordMetadata.offset(),
-                    recordMetadata.timestamp());
-            outboxStatus.accept(outboxMessage, OutboxStatus.COMPLETED);
-        }
+    public <T, U> BiConsumer<SendResult<String, T>, Throwable> getKafkaCallback(
+            String responseTopicName, T avroModel, U outboxMessage,
+            BiConsumer<U, OutboxStatus> outboxStatus,
+            UUID orderId, String avroModelName) {
+        return (result, ex) -> {
+            if (ex == null) {
+                RecordMetadata recordMetadata = result.getRecordMetadata();
+                log.info("Received successful response from kafka for order id: {}" +
+                                " Topic: {} Partition: {} Offset: {} Timestamp: {}",
+                        orderId,
+                        recordMetadata.topic(),
+                        recordMetadata.partition(),
+                        recordMetadata.offset(),
+                        recordMetadata.timestamp());
+                outboxStatus.accept(outboxMessage, OutboxStatus.COMPLETED);
+            } else {
+                log.error("Error while sending {} message: {} and outbox type: {} to topic {}", avroModelName,
+                        avroModel.toString(), outboxMessage.getClass().getName(), responseTopicName, ex);
+                outboxStatus.accept(outboxMessage, OutboxStatus.FAILED);
+            }
+        };
     }
 
     public <T> T getOrderEventPayload(String payload, Class<T> outputType) {
@@ -46,7 +48,7 @@ public class KafkaMessageHelper {
             return objectMapper.readValue(payload, outputType);
         } catch (JsonProcessingException e) {
             log.error("Could not read {} object!", outputType.getName(), e);
-            throw new OrderDomainException("Could not read " + outputType +  " object!", e);
+            throw new OrderDomainException("Could not read " + outputType + " object!", e);
         }
     }
 
