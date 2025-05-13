@@ -1,12 +1,9 @@
 package com.food.ordering.system.order.service.messaging.publisher.kafka;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.food.ordering.system.kafka.order.avro.model.PaymentRequestAvroModel;
 import com.food.ordering.system.kafka.producer.KafkaMessageHelper;
 import com.food.ordering.system.kafka.producer.service.KafkaProducer;
 import com.food.ordering.system.order.service.domain.config.OrderServiceConfigData;
-import com.food.ordering.system.order.service.domain.exception.OrderDomainException;
 import com.food.ordering.system.order.service.domain.outbox.model.payment.OrderPaymentEventPayload;
 import com.food.ordering.system.order.service.domain.outbox.model.payment.OrderPaymentOutboxMessage;
 import com.food.ordering.system.order.service.domain.ports.output.message.publisher.payment.PaymentRequestMessagePublisher;
@@ -45,13 +42,11 @@ public class OrderPaymentEventKafkaPublisher implements PaymentRequestMessagePub
                     .orderPaymentEventToPaymentRequestAvroModel(sagaId, orderPaymentEventPayload);
 
             kafkaProducer.send(orderServiceConfigData.getPaymentRequestTopicName(), sagaId.toString(),
-                            paymentRequestAvroModel)
-                    .whenComplete((result, ex) ->
-                            kafkaMessageHelper.getKafkaCallback(result, ex,
-                                    orderServiceConfigData.getPaymentRequestTopicName(), paymentRequestAvroModel,
-                                    orderPaymentOutboxMessage, outboxCallback,
-                                    orderPaymentEventPayload.getOrderId(),
-                                    "PaymentRequestAvroModel"));
+                    paymentRequestAvroModel, kafkaMessageHelper.getKafkaCallback(
+                            orderServiceConfigData.getPaymentRequestTopicName(), paymentRequestAvroModel,
+                            orderPaymentOutboxMessage, outboxCallback,
+                            orderPaymentEventPayload.getOrderId(),
+                            "PaymentRequestAvroModel"));
 
             log.info("OrderPaymentEventPayload sent to Kafka for order id: {} and saga id: {}",
                     orderPaymentEventPayload.getOrderId(), sagaId);
