@@ -33,13 +33,11 @@ public class OrderRejectedKafkaMessagePublisher implements OrderRejectedMessageP
                             .orderRejectedEventToRestaurantApprovalResponseAvroModel(orderRejectedEvent);
 
             kafkaProducer.send(restaurantServiceConfigData.getRestaurantApprovalResponseTopicName(), orderId,
-                            restaurantApprovalResponseAvroModel)
-                    .whenComplete((result, ex) ->
-                            kafkaMessageHelper.getKafkaCallback(result, ex,
-                                    restaurantServiceConfigData.getRestaurantApprovalResponseTopicName(),
-                                    restaurantApprovalResponseAvroModel, orderId,
-                                    "RestaurantApprovalResponseAvroModel")
-                    );
+                    restaurantApprovalResponseAvroModel,
+                    kafkaMessageHelper.getKafkaCallback(
+                            restaurantServiceConfigData.getRestaurantApprovalResponseTopicName(),
+                            restaurantApprovalResponseAvroModel, orderId,
+                            "RestaurantApprovalResponseAvroModel"));
 
             log.info("RestaurantApprovalResponseAvroModel sent to kafka at: {}", System.nanoTime());
         } catch (Exception e) {

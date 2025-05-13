@@ -1,6 +1,5 @@
 package com.food.ordering.system.payment.service.messaging.publisher.kafka;
 
-import com.food.ordering.system.kafka.order.avro.model.PaymentRequestAvroModel;
 import com.food.ordering.system.kafka.order.avro.model.PaymentResponseAvroModel;
 import com.food.ordering.system.kafka.producer.KafkaMessageHelper;
 import com.food.ordering.system.kafka.producer.service.KafkaProducer;
@@ -32,12 +31,10 @@ public class PaymentCompletedKafkaMessagePublisher implements PaymentCompletedMe
             PaymentResponseAvroModel paymentResponseAvroModel =
                     paymentMessagingDataMapper.paymentCompletedEventToPaymentResponseAvroModel(domainEvent);
 
-            kafkaProducer.send(paymentServiceConfigData.getPaymentResponseTopicName(), orderId, paymentResponseAvroModel)
-                    .whenComplete((result, ex) ->
-                            kafkaMessageHelper.getKafkaCallback(result, ex,
-                                    paymentServiceConfigData.getPaymentResponseTopicName(), paymentResponseAvroModel,
-                                    orderId, "PaymentResponseAvroModel")
-                    );
+            kafkaProducer.send(paymentServiceConfigData.getPaymentResponseTopicName(), orderId, paymentResponseAvroModel,
+                    kafkaMessageHelper.getKafkaCallback(
+                            paymentServiceConfigData.getPaymentResponseTopicName(), paymentResponseAvroModel,
+                            orderId, "PaymentResponseAvroModel"));
 
             log.info("PaymentResponseAvroModel sent to kafka for order id: {}", orderId);
         } catch (Exception e) {
