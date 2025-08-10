@@ -21,6 +21,8 @@ curl --location 'http://localhost:8083/connectors' \
   }
 }'
 
+sleep 2
+
 curl --location 'http://localhost:8083/connectors' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -42,6 +44,8 @@ curl --location 'http://localhost:8083/connectors' \
   }
 }'
 
+sleep 2
+
 curl --location 'http://localhost:8083/connectors' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -62,6 +66,8 @@ curl --location 'http://localhost:8083/connectors' \
     "plugin.name": "pgoutput"
   }
 }'
+
+sleep 2
 
 curl --location 'http://localhost:8083/connectors' \
 --header 'Content-Type: application/json' \
