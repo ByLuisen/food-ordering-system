@@ -1,0 +1,52 @@
+services:
+  customer-service:
+    restart: unless-stopped
+    image: com.food.ordering.system/customer.service:1.0-SNAPSHOT
+    container_name: food-ordering-system-customer-service
+    environment:
+      DATASOURCE_URL: food-ordering-system-db:5432
+      KAFKA_BOOTSTRAP_SERVERS: redpanda-0:9092,redpanda-1:9092,redpanda-2:9092
+      KAFKA_SCHEMA_REGISTRY_URL: http://redpanda-0:8081
+    ports:
+      - "8184:8184"
+    networks:
+      - food-ordering-system
+
+  order-service:
+    restart: unless-stopped
+    image: com.food.ordering.system/order.service:1.0-SNAPSHOT
+    container_name: food-ordering-system-order-service
+    environment:
+      DATASOURCE_URL: food-ordering-system-db:5432
+      KAFKA_BOOTSTRAP_SERVERS: redpanda-0:9092,redpanda-1:9092,redpanda-2:9092
+      KAFKA_SCHEMA_REGISTRY_URL: http://redpanda-0:8081
+    ports:
+      - "8181:8181"
+    networks:
+      - food-ordering-system
+
+  payment-service:
+    restart: unless-stopped
+    image: com.food.ordering.system/payment.service:1.0-SNAPSHOT
+    container_name: food-ordering-system-payment-service
+    environment:
+      DATASOURCE_URL: food-ordering-system-db:5432
+      KAFKA_BOOTSTRAP_SERVERS: redpanda-0:9092,redpanda-1:9092,redpanda-2:9092
+      KAFKA_SCHEMA_REGISTRY_URL: http://redpanda-0:8081
+    ports:
+      - "8182:8182"
+    networks:
+      - food-ordering-system
+
+  restaurant-service:
+    restart: unless-stopped
+    image: com.food.ordering.system/restaurant.service:1.0-SNAPSHOT
+    container_name: food-ordering-system-restaurant-service
+    environment:
+      DATASOURCE_URL: food-ordering-system-db:5432
+      KAFKA_BOOTSTRAP_SERVERS: redpanda-0:9092,redpanda-1:9092,redpanda-2:9092
+      KAFKA_SCHEMA_REGISTRY_URL: http://redpanda-0:8081
+    ports:
+      - "8183:8183"
+    networks:
+      - food-ordering-system

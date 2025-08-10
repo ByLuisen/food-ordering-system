@@ -31,6 +31,7 @@ services:
     container_name: cloudbeaver
     environment:
       - CLOUDBEAVER_EXPIRE_SESSION_AFTER_PERIOD=2147460000
+      - CLOUDBEAVER_CORE_THEMING_THEME=dark
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
     ports:
